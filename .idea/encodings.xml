@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/baeflower/sol/plateshare/IntroActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/baeflower/sol/plateshare/fragment/CardFragment.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/background_card.9.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/background_tabs.xml" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_action_user.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/tabs_pattern.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/menu/menu_main.xml" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/AsyncPSContentAdapter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/AsyncPSContentLoader.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/ChainedImageCache.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/ImageCache.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/ImageCacheFactory.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/pscontentloader/src/main/java/com/baeflower/sol/pscontentloader/MemoryImageCache.java" charset="x-windows-949" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
