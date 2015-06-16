@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#E63F51B5"/>
+    <!-- B3: 70%,  CC: 80%, D9: 85%,  E6: 90%, F2: 95% -->
+</selector>

@@ -270,11 +270,11 @@ public class ShareCreateActivity_v1 extends ActionBarActivity implements View.On
                     runOnUiThread(new Runnable() {
                         public void run() {
                         }
-                    });ㅇ
+                    });
 
                     int imageUploadResult;
 
-                    if (fromGallery) {
+                    if (fromGallery) {ㅇ
                         imageUploadResult = uploadFile(mImageRealPathFromGall);
                     } else { // camera
                         imageUploadResult = uploadFile(mFolderPathStr + "/" + mUploadFileName);
