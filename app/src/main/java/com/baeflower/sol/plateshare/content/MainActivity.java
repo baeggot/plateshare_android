@@ -22,9 +22,6 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.baeflower.sol.plateshare.R;
 import com.baeflower.sol.plateshare.fragment.BuyFragment;
 import com.baeflower.sol.plateshare.fragment.ShareFragment;
-import com.baeflower.sol.plateshare.model.PSContent;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
@@ -67,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 콘텐츠 출력
 
-
     private void init() {
         mPrefUserSetting = getSharedPreferences(mSettingFileName, 0);
         mPrefEditor = mPrefUserSetting.edit(); // Preference Editor
@@ -99,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onPageSelected(int position) {
                 showLog(String.valueOf(position));
-
-
             }
 
             @Override
@@ -154,9 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-
         showToast("onNavigationItemSelected()");
-
         return false;
     }
 
@@ -195,15 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         private final String[] mMenus = {"나누기", "같이사기"};
         private final int SHARE = 0;
         private final int BUY = 1;
-        private int mCurrentMenu = 0;
-
-        private ShareFragment mFragment;
-
-        private ArrayList<PSContent> mPSContentList;
-
-        public void setmPSContentList(ArrayList<PSContent> contentList) {
-            mPSContentList = contentList;
-        }
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);

@@ -135,7 +135,7 @@
 
         <Button
             android:id="@+id/btn_dday_date"
-            android:text="0000-00-00"
+            android:text="0000/00/00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />

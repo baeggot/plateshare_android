@@ -19,4 +19,5 @@
     <string name="title_activity_content_view_pager">플레이트쉐어</string>
     <string name="title_activity_content_view_pager_exam02">ContentViewPagerExam02Activity</string>
     <string name="title_activity_share_create">ShareCreateActivity</string>
+    <string name="title_activity_recycler_test">RecyclerTestActivity</string>
 </resources>

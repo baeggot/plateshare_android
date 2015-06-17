@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.baeflower.sol.plateshare.R;
-import com.baeflower.sol.plateshare.adapter.PSContentsAdapter;
+import com.baeflower.sol.plateshare.adapter.ShareContentsAdapter;
 import com.baeflower.sol.plateshare.phpUtil.SelectCountContentsByUnivPhp;
 import com.software.shell.fab.ActionButton;
 
@@ -34,7 +34,7 @@ public class BuyFragment extends Fragment {
 
     private static final int SPAN_COUNT = 2;
 
-    private PSContentsAdapter mRVAdapter;
+    private ShareContentsAdapter mRVAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -117,12 +117,8 @@ public class BuyFragment extends Fragment {
         }
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mRVAdapter = new PSContentsAdapter(new String[]{ "헤이요", "김밥에김이없데", "요요요", "촛불하나", "목이", "간지러" }, BUY);
-
-//        mSelectContentsPhp = new SelectCountContentsByUnivPhp(getActivity(), listView);
-//        mSelectContentsPhp.execute(mUniv);
-
-        mRecyclerView.setAdapter(mRVAdapter);
+        // mRVAdapter = new ShareContentsAdapter(new String[]{ "헤이요", "김밥에김이없데", "요요요", "촛불하나", "목이", "간지러" }, BUY);
+        // mRecyclerView.setAdapter(mRVAdapter);
 
         return rootView;
     }
@@ -154,11 +150,5 @@ public class BuyFragment extends Fragment {
         mRecyclerView.scrollToPosition(scrollPosition);
     }
 
-
-
-
-    private void addPSContents() {
-
-    }
 
 }

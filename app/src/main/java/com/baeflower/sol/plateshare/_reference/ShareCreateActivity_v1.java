@@ -274,7 +274,7 @@ public class ShareCreateActivity_v1 extends ActionBarActivity implements View.On
 
                     int imageUploadResult;
 
-                    if (fromGallery) {ㅇ
+                    if (fromGallery) {
                         imageUploadResult = uploadFile(mImageRealPathFromGall);
                     } else { // camera
                         imageUploadResult = uploadFile(mFolderPathStr + "/" + mUploadFileName);

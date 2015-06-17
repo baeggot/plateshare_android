@@ -60,7 +60,7 @@ public class SelectCountContentsByUnivPhp extends AsyncTask<String, Integer, Boo
     protected void onPreExecute() {
 
         mDialog = new ProgressDialog(mContext);
-        mDialog.setMessage("Getting Data ...");
+        // mDialog.setMessage("Getting Data ...");
         mDialog.show();
 
     }
@@ -103,7 +103,7 @@ public class SelectCountContentsByUnivPhp extends AsyncTask<String, Integer, Boo
 
         if (result == true) {
             mDataList = new ArrayList<>(mCnt); // mCnt 갯수만큼 크기를 지정해서 초기화
-            mAdapter = new FragmentContentsAdapter(mContext, mDataList, mJsonArr);
+            mAdapter = new FragmentContentsAdapter(mContext, mDataList, mJsonArr); // BaseAdapter
             mListView.setAdapter(mAdapter);
 
         } else {

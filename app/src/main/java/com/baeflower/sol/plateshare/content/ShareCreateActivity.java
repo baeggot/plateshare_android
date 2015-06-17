@@ -1,8 +1,10 @@
 package com.baeflower.sol.plateshare.content;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -43,6 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,6 +61,10 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
 
     private static final String TAG = ShareCreateActivity.class.getSimpleName();
+    private SharedPreferences mPrefUserSetting;
+    private SharedPreferences.Editor mPrefEditor;
+
+
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -83,6 +90,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
 
     // 서버 업로드
+    private InsertSharePhp mInsertSharePhp;
 
     private String mUploadFileName;
     private Uri mPicUri;
@@ -96,8 +104,14 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
     private boolean mImageSet = false;
 
 
+    // 사용자 정보
+    private int mId;
+    private String mUniv;
+
+
 
     private void init() {
+
         mEtShareTitle = (EditText) findViewById(R.id.et_share_create_title);
 
         mEtShareExplanation = (EditText) findViewById(R.id.et_share_create_explanation);
@@ -251,8 +265,8 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
         final String dday = mBtnDday.getText().toString();
 
         if (TextUtils.isEmpty(title) == false && TextUtils.isEmpty(expla) == false && mImageSet && mDateSet) {
-            InsertSharePhp insertSharePhp = new InsertSharePhp();
-            insertSharePhp.execute(title, expla, dday);
+            mInsertSharePhp = new InsertSharePhp(ShareCreateActivity.this);
+            mInsertSharePhp.execute(title, expla, dday);
 
         } else {
             showToast("빠짐없이 입력해 주세요 :D");
@@ -266,14 +280,20 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
         private final String TAG = InsertSharePhp.class.getSimpleName();
 
-        public InsertSharePhp() {
+
+        private WeakReference<Activity> callerActivity;
+        private WeakReference<ProgressDialog> dialog;
+
+
+        public InsertSharePhp(Activity activity) {
+            callerActivity = new WeakReference<>(activity);
         }
 
-
         private final String mSharePhotoSaveUrl = "http://plateshare.kr/php/share/insert_share_photo.php";
-        private final String mShareSaveUrl = "http://plateshare.kr/php/share/insert_share.php";
+        private final String mShareSaveUrl = "http://plateshare.kr/php/insert_share.php";
 
         private ProgressDialog mDialog = new ProgressDialog(ShareCreateActivity.this);
+
 
         private String mTitle;
         private String mExplanation;
@@ -285,10 +305,16 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
         @Override
         protected void onPreExecute() {
-            mDialog.setCancelable(false);
-            mDialog.setMessage("저장중...");
-            mDialog.show();
+
+            if( callerActivity.get() != null ) {
+                dialog = new WeakReference<>( new ProgressDialog( callerActivity.get() ) );
+                dialog.get().setCancelable(false);
+                if( callerActivity.get() != null && !callerActivity.get().isFinishing()) {
+                    dialog.get().show();
+                }
+            }
         }
+
 
         @Override
         protected Boolean doInBackground(String... params) {
@@ -309,6 +335,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
         private boolean createShareContent() {
 
+            /**/
             boolean imageSaved = uploadImageFile();
 
             if (imageSaved) {
@@ -316,16 +343,19 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
             } else {
                 return false;
             }
+
         }
 
 
         private boolean insertShare() {
             List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("user_id", String.valueOf(PSContants.USERINFO.getmId())));
             params.add(new BasicNameValuePair("title", mTitle));
             params.add(new BasicNameValuePair("explanation", mExplanation));
+            params.add(new BasicNameValuePair("univ", PSContants.USERINFO.getmUniv()));
             params.add(new BasicNameValuePair("image", mSavedImageName));
             params.add(new BasicNameValuePair("d_day", mDdayStr));
-            // userid, address, univ
+            // userId, address, univ
 
             mJsonParser = new JSONParser();
             String resultMessage;
@@ -346,6 +376,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
                 }
 
             } catch (JSONException e) {
+                showLog("JSONException");
             }
             return false;
         }
@@ -531,13 +562,17 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
         @Override
         protected void onPostExecute(Boolean shareSaved) {
 
+            if( dialog.get() != null ) {
+                dialog.get().dismiss();
+                dialog = null;
+            }
+
             if (shareSaved) {
                 showToast("저장 되었습니다 :D");
+                finish();
             } else {
                 showToast("저장에 실패했습니다 :(");
             }
-
-            mDialog.dismiss();
         }
     }
 
@@ -548,7 +583,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
     // 내용에 글자 쓸 때마다 바이트 세기
     private void changeBytesCountView(int inputBytesLength) {
-        mTvShareExplaCount.setText(inputBytesLength + " / 200 bytes");
+        mTvShareExplaCount.setText(inputBytesLength + " / 200 byte");
     }
 
     private Calendar mCalendar;
@@ -586,7 +621,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
             if (Integer.parseInt(inputStr) < Integer.parseInt(tomorrowStr)) {// 최소 내일 이후로
                 mDateSet = false;
                 showToast("최소한 내일 이후로 입력해 주세요 :D");
-                mBtnDday.setText("0000-00-00");
+                mBtnDday.setText("0000/00/00");
             } else {
                 mDateSet = true;
                 mCalendar.set(year, monthOfYear, dayOfMonth);

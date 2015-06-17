@@ -38,7 +38,7 @@ public class FragmentContentsAdapter extends BaseAdapter {
 
 
 
-    // ViewHolder static class
+    // ShareViewHolder static class
     static class ViewHolder {
         ImageView imageView;
         TextView textView;

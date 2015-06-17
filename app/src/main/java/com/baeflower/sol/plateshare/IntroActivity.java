@@ -45,7 +45,6 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
 
     private SelectMemberPhp mSelectMemberPhp;
 
-    private final String mSettingFileName = "plateshare_setting";
     private SharedPreferences mPrefUserSetting;
     private SharedPreferences.Editor mPrefEditor;
 
@@ -77,7 +76,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
             기록된 값 지우기 : 전체제거 - editor.clear(); , 부분제거 - editor.remove(key);
         */
 
-        mPrefUserSetting = getSharedPreferences(mSettingFileName, 0);
+        mPrefUserSetting = getSharedPreferences(PSContants.SETTING_FILENAME, 0);
         mPrefEditor = mPrefUserSetting.edit(); // Preference Editor
 
 
@@ -153,7 +152,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
         private String mResultMessage;
         private String mEmail;
         private String mPassword;
-        private JSONObject mJsonObj;
+        private JSONObject mUserInfoJsonObj;
 
         public SelectMemberPhp() {
         }
@@ -186,7 +185,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
 
                 if (success == 1) {
                     log("사용자 정보 있음");
-                    mJsonObj = json.getJSONArray("user").getJSONObject(0);
+                    mUserInfoJsonObj = json.getJSONArray("user").getJSONObject(0);
                     return true;
                 } else {
                     mResultMessage = json.getString(PSContants.TAG_MESSAGE);
@@ -216,6 +215,17 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
                     dialog.show();
                 */
 
+                // 사용자 정보 저장
+                try {
+                    PSContants.USERINFO.setmId(mUserInfoJsonObj.getLong("id"));
+                    PSContants.USERINFO.setmUniv(mUserInfoJsonObj.getString("univ"));
+                    PSContants.USERINFO.setmLocation(mUserInfoJsonObj.getString("location"));
+                    PSContants.USERINFO.setmMapLocation(mUserInfoJsonObj.getString("map_location"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 // showToast("플레이트쉐어에 오신 것을 환영합니다 :D");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -237,8 +247,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
             try {
                 mPrefEditor.putString("email", mEmail);
                 mPrefEditor.putString("password", mPassword);
-
-                mPrefEditor.putString("univ", mJsonObj.getString("univ"));
+                mPrefEditor.putString("univ", mUserInfoJsonObj.getString("univ"));
                 mPrefEditor.putBoolean("auto_login_enabled", true);
                 mPrefEditor.commit();
             } catch (JSONException e) {
@@ -247,7 +256,12 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
         }
 
         private void deletePrefDataSetting() {
-            mPrefEditor.clear();
+            mPrefEditor.clear(); // all data 삭제
+
+//            mPrefEditor.remove("email");
+//            mPrefEditor.remove("password");
+//            mPrefEditor.putBoolean("auto_login_enabled", false);
+
             mPrefEditor.commit();
         }
     }
