@@ -15,8 +15,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.baeflower.sol.plateshare.content.MainActivity;
-import com.baeflower.sol.plateshare.member.RegisterActivity;
+import com.baeflower.sol.plateshare.activity.MainActivity;
+import com.baeflower.sol.plateshare.activity.member.RegisterActivity;
 import com.baeflower.sol.plateshare.util.JSONParser;
 import com.baeflower.sol.plateshare.util.PSContants;
 
@@ -199,6 +199,11 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
         @Override
         protected void onPostExecute(Boolean result) {
 
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+
             if (result == true) { // 회원정보있음
                 /*
                     AlertDialog.Builder builder = new AlertDialog.Builder(IntroActivity.this);
@@ -218,9 +223,11 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
                 // 사용자 정보 저장
                 try {
                     PSContants.USERINFO.setmId(mUserInfoJsonObj.getLong("id"));
+                    PSContants.USERINFO.setmEmail(mUserInfoJsonObj.getString("email"));
                     PSContants.USERINFO.setmUniv(mUserInfoJsonObj.getString("univ"));
-                    PSContants.USERINFO.setmLocation(mUserInfoJsonObj.getString("location"));
-                    PSContants.USERINFO.setmMapLocation(mUserInfoJsonObj.getString("map_location"));
+                    PSContants.USERINFO.setmTextLocation(mUserInfoJsonObj.getString("location"));
+                    PSContants.USERINFO.setmLatitude(mUserInfoJsonObj.getDouble("latitude"));
+                    PSContants.USERINFO.setmLongitude(mUserInfoJsonObj.getDouble("longitude"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -240,7 +247,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
             } else { // 회원정보없음
                 showToast(mResultMessage);
             }
-            mDialog.dismiss();
+
         }
 
         private void savePrefDataSetting() {

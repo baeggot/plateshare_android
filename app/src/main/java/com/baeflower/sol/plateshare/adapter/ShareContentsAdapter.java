@@ -1,16 +1,29 @@
 package com.baeflower.sol.plateshare.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.baeflower.sol.plateshare.R;
+import com.baeflower.sol.plateshare.activity.share.ShareDetailActivity;
+import com.baeflower.sol.plateshare.listener.AnimateFirstDisplayListener;
 import com.baeflower.sol.plateshare.model.ShareInfo;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -20,7 +33,11 @@ import java.util.List;
  */
 public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = "ShareContentsAdapter";
+    private static final String TAG = ShareContentsAdapter.class.getSimpleName();
+
+    private final int VIEW_ITEM = 1; // 데이터 출력
+    private final int VIEW_PROG = 0; // progress item 출력
+
 
 
     private void showLog(String message) {
@@ -28,20 +45,20 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
 
-    private final int VIEW_ITEM = 1;
-    private final int VIEW_PROG = 0;
+    private Context mContext;
 
     private List<ShareInfo> mDataList;
-    private String[] mDataArr; // test
-
-    private boolean isFooterEnabled = true;
-
     private SimpleDateFormat mSf = new SimpleDateFormat("yyyy/MM/dd");
 
+    // Android Universal Image Loader
+    private DisplayImageOptions mDisplayImageOptions;
+
+    // 리스트 뷰 스크롤에 쓰이는 변수들
     private int previousTotal = 0; // The total number of items in the dataset after the last load
     private boolean loading = false; // True if we are still waiting for the last set of data to load.
     private int visibleThreshold = 1; // The minimum amount of items to have below your current scroll position before loading more.
 
+    // 인터페이스
     private OnLoadMoreListener onLoadMoreListener;
 
     public interface OnLoadMoreListener{
@@ -54,7 +71,9 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
     // 생성자
-    public ShareContentsAdapter(List<ShareInfo> shareInfoList, RecyclerView recyclerView) {
+    public ShareContentsAdapter(Context context, List<ShareInfo> shareInfoList, RecyclerView recyclerView) {
+
+        mContext = context;
         mDataList = shareInfoList;
 
         if(recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
@@ -74,7 +93,35 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     showLog("lastVisibleItem : " + String.valueOf(lastVisibleItem));
                     showLog(String.valueOf(loading));
 
-                    if (loading == false && totalItemCount <= (lastVisibleItem + visibleThreshold + 1)) {
+                    if (loading == false && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        // End has been reached
+                        // Do something
+                        if (onLoadMoreListener != null) {
+                            onLoadMoreListener.onLoadMore();
+                        }
+                        loading = true;
+                    }
+                }
+            });
+
+        } else if (recyclerView.getLayoutManager() instanceof GridLayoutManager) { // grid 는 어케 함
+
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    showLog("onScrolled()");
+
+                    int totalItemCount = gridLayoutManager.getItemCount();
+                    int lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+
+                    showLog("totalItemCount : " + String.valueOf(totalItemCount));
+                    showLog("lastVisibleItem : " + String.valueOf(lastVisibleItem));
+                    showLog(String.valueOf(loading));
+
+                    if (loading == false && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                         // End has been reached
                         // Do something
                         if (onLoadMoreListener != null) {
@@ -86,18 +133,23 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             });
         }
 
-    }
 
-    // 생성자
-    public ShareContentsAdapter(List<ShareInfo> dataList) {
-        showLog("shareContentAdapter 생성자");
+        // -------------------- Android Universal Image Loader 세팅
+        mDisplayImageOptions = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.loading)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .imageScaleType(ImageScaleType.EXACTLY)
+                .build();
 
-        mDataList = dataList;
-    }
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext)
+                .threadPoolSize(3)
+                .diskCacheExtraOptions(480, 320, null)
+            .build();
+        ImageLoader.getInstance().init(config);
 
-    // 생성자 : test
-    public ShareContentsAdapter(String[] dataArr) {
-        mDataArr = dataArr;
     }
 
 
@@ -109,6 +161,8 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         private TextView tvTitle;
         private TextView tvLocation;
         private TextView tvDday;
+        private ImageView ivSharePhoto;
+        private CardView cvShare;
 
         public ShareViewHolder(View v) {
             super(v);
@@ -117,15 +171,8 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             tvTitle = (TextView) v.findViewById(R.id.tv_list_items_share_title);
             tvLocation = (TextView) v.findViewById(R.id.tv_list_items_share_location);
             tvDday = (TextView) v.findViewById(R.id.tv_list_items_share_dday);
-
-            // Define click listener for the ShareViewHolder's View
-            /*
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            });
-            */
+            ivSharePhoto = (ImageView) v.findViewById(R.id.iv_list_items_share_image);
+            cvShare = (CardView) v.findViewById(R.id.card_view_share);
         }
 
         public TextView getTvTitle() {
@@ -136,6 +183,13 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         public TextView getTvDday() {
             return tvDday;
+        }
+        public ImageView getIvSharePhoto() {
+            return ivSharePhoto;
+        }
+
+        public CardView getCvShare() {
+            return cvShare;
         }
     }
 
@@ -178,27 +232,43 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 //        return new ShareViewHolder(view);
     }
 
+    private String mImageUrl = "http://plateshare.kr/php/share/resources/";
+    private ImageLoadingListener mAnimateFirstListener = new AnimateFirstDisplayListener();
+
     // Replace the contents of a view (invoked by the layout manager)
     // getView() 같은 기능
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         showLog("onBindViewHolder()");
 
-        /*
-        // Get element from your dataset at this position and replace the contents of the view with that element
-        viewHolder.getTvTitle().setText(mDataList.get(position).getmTitle());
-        viewHolder.getTvLocation().setText(mDataList.get(position).getmLocation());
-
-        String dDay = mSf.format(mDataList.get(position).getmDday());
-        viewHolder.getTvDday().setText(dDay);
-        */
-
         if (viewHolder instanceof ShareViewHolder){
             ((ShareViewHolder) viewHolder).getTvTitle().setText(mDataList.get(position).getmTitle());
-            ((ShareViewHolder) viewHolder).getTvLocation().setText(mDataList.get(position).getmLocation());
+            ((ShareViewHolder) viewHolder).getTvLocation().setText(mDataList.get(position).getmTextLocation());
 
             String dDay = mSf.format(mDataList.get(position).getmDday());
             ((ShareViewHolder) viewHolder).getTvDday().setText(dDay);
+
+            // 이미지
+            // url, imageView, display image options, animateFirstListener
+            ImageLoader.getInstance().displayImage(
+                    mImageUrl + mDataList.get(position).getmImageName()
+                    , ((ShareViewHolder) viewHolder).getIvSharePhoto()
+                    , mDisplayImageOptions
+                    , mAnimateFirstListener);
+
+            // 카드뷰
+            ((ShareViewHolder) viewHolder).getCvShare().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showLog("cardView click");
+
+                    Intent shareDetailIntent = new Intent(mContext, ShareDetailActivity.class);
+                    shareDetailIntent.putExtra("shareInfo", mDataList.get(position));
+                    mContext.startActivity(shareDetailIntent);
+                }
+            });
+
+
         } else {
             ((ProgressViewHolder) viewHolder).progressBar.setIndeterminate(true);
         }
@@ -209,38 +279,32 @@ public class ShareContentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        showLog("getItemCount() : " + String.valueOf(isFooterEnabled));
-//        return (isFooterEnabled) ? mDataList.size() + 1 : mDataList.size();
         return mDataList.size();
     }
 
     /*
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+
         @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-            showLog("onAttachedToRecyclerView()");
-            super.onAttachedToRecyclerView(recyclerView);
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
         }
-    */
+    }
+*/
 
     public void setLoaded(){
         loading = false;
     }
 
-//    public void enableFooter(boolean isEnabled){
-//        this.isFooterEnabled = isEnabled;
-//    }
 
-    /*
-    public void add(ViewModel item, int position) {
-        items.add(position, item);
-        notifyItemInserted(position);
-    }
-
-    public void remove(ViewModel item) {
-        int position = items.indexOf(item);
-        items.remove(position);
-        notifyItemRemoved(position);
-    }
-    */
 
 }

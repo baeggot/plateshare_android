@@ -1,0 +1,129 @@
+<FrameLayout
+    android:id="@+id/drawerL_toolbar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.baeflower.hello.layout.ToolbarActivity">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_share_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tb_share_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/ColorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/Theme.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        />
+
+        <!-- android:clipToPadding="false" -->
+
+
+    <!--&lt;!&ndash; 컨텐츠 &ndash;&gt;-->
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_share_detail_title"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:text="제목"-->
+    <!--android:textSize="20sp"-->
+    <!--/>-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="5dp"-->
+    <!--android:layout_marginStart="5dp"-->
+    <!--android:gravity="right"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_share_detail_writer"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="작성자"-->
+    <!--android:textSize="15sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_share_detail_dday"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="디데이"-->
+    <!--android:textSize="15sp"/>-->
+
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash;<com.baeflower.sol.plateshare.view.ShareDetailImageView&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/iv_share_detail_photo"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_margin="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:padding="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:scaleType="centerInside"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:src="@drawable/giraffe_1"&ndash;&gt;-->
+    <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/iv_share_detail_photo"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/giraffe_1"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_share_detail_explanation"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="5dp"-->
+    <!--android:layout_marginEnd="5dp"-->
+    <!--android:layout_marginStart="5dp"-->
+    <!--android:text="내용"-->
+    <!--android:textSize="15sp"-->
+    <!--/>-->
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_share_detail_text_location"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="5dp"-->
+    <!--android:layout_marginEnd="5dp"-->
+    <!--android:layout_marginStart="5dp"-->
+    <!--android:textSize="15sp"-->
+    <!--/>-->
+
+
+    <!--&lt;!&ndash;<fragment android:id="@+id/fragment_share_detail"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:name="com.baeflower.sol.plateshare.fragment.ShareDetailFragment"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+
+    <!--<fragment-->
+    <!--android:id="@+id/fragment_google_map_share_detail"-->
+    <!--android:name="com.google.android.gms.maps.MapFragment"-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="150dp"/>-->
+
+    <!--</LinearLayout>-->
+
+
+</FrameLayout>

@@ -15,11 +15,38 @@
 
 
     <!-- intro -->
-    <style name="NoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="IntroNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="android:windowBackground">@drawable/intro</item>-->
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <!-- Tool Bar -->
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+        <!--<item name="windowActionBarOverlay">true</item>-->
+    </style>
+
+    <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <!-- Customize your theme here. -->
+        <!-- Toolbar의 타이틀 색 -->
+        <item name="android:textColorPrimary">#ffffff</item>
+        <!-- Toolbar의 옵션 메뉴의 Overflow 아이콘 색 -->
+        <item name="android:textColorSecondary">#ffffff</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+
+        <!-- SearchView 등의 테마 -->
+        <item name="android:actionBarWidgetTheme">@style/actionBarWidgetTheme</item>
+    </style>
+    <style name="actionBarWidgetTheme">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textColorHint">#f5f5f5</item>
+    </style>
+
 
 
     <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light">
@@ -27,25 +54,25 @@
 
     <style name="MaterialAppTheme" parent="AppBaseTheme">
 
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="21">true</item>
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
+        <!--<item name="android:windowTranslucentStatus" tools:targetApi="21">true</item>-->
 
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
 
-        <!-- Toolbar Theme / Apply white arrow -->
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="actionBarTheme">@style/AppTheme.ActionBarTheme</item>
+        <!--&lt;!&ndash; Toolbar Theme / Apply white arrow &ndash;&gt;-->
+        <!--<item name="colorControlNormal">@android:color/white</item>-->
+        <!--<item name="actionBarTheme">@style/AppTheme.ActionBarTheme</item>-->
 
-        <!-- Material Theme -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/accent_color</item>
+        <!--&lt;!&ndash; Material Theme &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/accent_color</item>-->
 
-        <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
-        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
+        <!--<item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>-->
+        <!--<item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>-->
 
     </style>
 
@@ -56,7 +83,7 @@
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@color/drawerArrowColor</item>
+        <item name="color">#FFffffff</item>
     </style>
 
 
@@ -70,8 +97,10 @@
         <item name="colorControlNormal">#FF0000</item>
     </style>
 
+
     <style name="PagerSlidingTabStripStyle">
-        <item name="android:textColorPrimary">#303F9F</item>
+        <item name="android:textColorPrimary">#FF303F9F</item>
+        <item name="tabIndicatorColor">#FF0000FF</item>
     </style>
 
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_share_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="제목"
+        android:textSize="20sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_share_detail_writer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="작성자"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tv_share_detail_dday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="디데이"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <!--<com.baeflower.sol.plateshare.view.ShareDetailImageView-->
+    <!--android:id="@+id/iv_share_detail_photo"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="0dp"-->
+    <!--android:padding="0dp"-->
+    <!--android:scaleType="centerInside"-->
+    <!--android:src="@drawable/giraffe_1"-->
+    <!--/>-->
+
+    <ImageView
+        android:id="@+id/iv_share_detail_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/giraffe_1"
+        />
+
+    <TextView
+        android:id="@+id/tv_share_detail_explanation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:text="내용"
+        android:textSize="15sp"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_share_detail_text_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:textSize="15sp"
+        />
+
+
+</LinearLayout>

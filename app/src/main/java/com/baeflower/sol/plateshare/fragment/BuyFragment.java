@@ -51,10 +51,10 @@ public class BuyFragment extends Fragment {
     }
 
 
-    public static BuyFragment newInstance(String univ) {
+    public static BuyFragment newInstance() {
         BuyFragment fragment = new BuyFragment();
         Bundle args = new Bundle();
-        args.putString("univ", univ);
+        //args.putString("univ", univ);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,7 +77,7 @@ public class BuyFragment extends Fragment {
         super.onCreate(savedInstanceState);
         showLog("onCreate()");
 
-        mUniv = getArguments().getString("univ");
+        //mUniv = getArguments().getString("univ");
 
     }
 

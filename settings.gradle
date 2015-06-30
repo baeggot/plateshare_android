@@ -1,1 +1,1 @@
-include ':app', ':pscontentloader'
+include ':app', ':pscontentloader', ':bitmapadapter'

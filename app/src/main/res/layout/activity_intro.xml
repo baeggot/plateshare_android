@@ -1,69 +1,85 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:orientation="vertical"
-              tools:context=".MainActivity">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IntroActivity">
 
 
-    <EditText
-        android:id="@+id/et_intro_id"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginStart="50dp"
-        android:hint="아이디"/>
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.8"
+        android:src="@drawable/vegetables"/>
 
 
-    <EditText
-        android:id="@+id/et_intro_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginStart="50dp"
-        android:hint="비밀번호"
-        android:inputType="textPassword"/>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:gravity="center"
+                  android:orientation="vertical">
 
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <CheckBox
-            android:id="@+id/cb_auto_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <CheckedTextView
-            android:text="자동 로그인"
+        <EditText
+            android:id="@+id/et_intro_id"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginStart="50dp"
+            android:hint="아이디"/>
+
+
+        <EditText
+            android:id="@+id/et_intro_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginStart="50dp"
+            android:hint="비밀번호"
+            android:inputType="textPassword"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/cb_auto_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckedTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="자동 로그인"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_intro_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="회원가입"/>
+
+            <Button
+                android:id="@+id/btn_intro_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="로그인"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/btn_intro_register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="회원가입"/>
-
-        <Button
-            android:id="@+id/btn_intro_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="로그인"/>
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</FrameLayout>

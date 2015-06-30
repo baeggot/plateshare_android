@@ -15,5 +15,7 @@ public class PSContants {
 
     public static UserInfo USERINFO = new UserInfo();
 
+    public static final int SHARE_LOAD_COUNT = 5;
+
 
 }

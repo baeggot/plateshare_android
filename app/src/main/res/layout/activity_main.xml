@@ -6,14 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.baeflower.sol.plateshare.content.MainActivity">
+    tools:context="com.baeflower.sol.plateshare.activity.MainActivity">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-
 
         <com.astuetz.PagerSlidingTabStrip
             android:id="@+id/tabs"
@@ -25,9 +24,10 @@
             android:textSize="13sp"
             app:pstsIndicatorColor="#FF3F51B5"
             app:pstsShouldExpand="true"
-            app:pstsTextColorSelected="@color/blue"
+            app:pstsIndicatorHeight="2dp"
             />
 
+        <!-- app:pstsTextColorSelected="@color/blue" -->
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"

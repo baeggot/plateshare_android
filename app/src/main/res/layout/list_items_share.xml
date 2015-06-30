@@ -30,7 +30,6 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:visibility="visible"
-                android:src="@drawable/giraffe_1"
                 android:layout_margin="5dp"
                 />
 
