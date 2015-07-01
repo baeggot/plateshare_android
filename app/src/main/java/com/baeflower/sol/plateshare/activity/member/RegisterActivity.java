@@ -165,7 +165,6 @@ public class RegisterActivity extends ActionBarActivity
             }
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                showLog("markerDragEnd");
                 mMarkerLatLng = marker.getPosition();
             }
         });
@@ -175,7 +174,6 @@ public class RegisterActivity extends ActionBarActivity
         constantMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Log.d(TAG, "onMapClick()");
 
                 MarkerOptions markerOptions = new MarkerOptions();
                 // markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_icon01));

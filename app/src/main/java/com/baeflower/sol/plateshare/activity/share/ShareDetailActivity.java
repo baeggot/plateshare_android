@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.baeflower.sol.plateshare.R;
 import com.baeflower.sol.plateshare.adapter.ShareDetailAdapter;
-import com.baeflower.sol.plateshare.listener.AnimateFirstDisplayListener;
+import com.baeflower.sol.plateshare.listener.HidingScrollListener;
 import com.baeflower.sol.plateshare.model.ShareInfo;
 import com.baeflower.sol.plateshare.util.PSContants;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +26,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ import java.util.List;
 public class ShareDetailActivity extends ActionBarActivity implements OnMapReadyCallback {
 
     private static final String TAG = ShareDetailActivity.class.getSimpleName();
-
-
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -49,7 +46,6 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
 
     private ShareDetailAdapter mAdapter;
     private Toolbar mToolbar;
-
 
 
     //
@@ -71,8 +67,6 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
 
     // Android Universal Image Loader
     private DisplayImageOptions mDisplayImageOptions;
-    private String mImageUrl = "http://plateshare.kr/php/share/resources/";
-    private ImageLoadingListener mAnimateFirstListener = new AnimateFirstDisplayListener();
 
 
     private void init() {
@@ -124,7 +118,6 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
 
             initRecyclerView(dataList);
 
-
             /*
             mTvTitle.setText(mShareDetail.getmTitle()); // 글제목
             mTvWriter.setText(PSContants.USERINFO.getmEmail()); // 작성자
@@ -144,12 +137,10 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
 
             mTvExplanation.setText(mShareDetail.getmExplanation()); // 내용
 
-
             // -------------------------- Map
             mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_google_map_share_detail);
             mMapFragment.getMapAsync(this);
 */
-
 
         }
 
@@ -176,23 +167,43 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
         // -------------------- Recycler View
         final boolean isFirstSet = true;
 
+        recyclerView.addOnScrollListener(new HidingScrollListener() {
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+            @Override
+            public void onShow() {
+                showViews();
+            }
+        });
+
+        /*
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                // showLog("onScroll()");
-                // toolbar hidden 하고싶은데
-
                     mToolbar.setAlpha(0.8f);
             }
-
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                // showLog("onScrollStateChanged()");
             }
         });
+        */
+    }
 
+
+    private void hideViews() {
+//        mToolbar.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+//        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabButton.getLayoutParams();
+//        int fabBottomMargin = lp.bottomMargin;
+//        mFabButton.animate().translationY(mFabButton.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    private void showViews() {
+//        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+//        mFabButton.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
     }
 
 

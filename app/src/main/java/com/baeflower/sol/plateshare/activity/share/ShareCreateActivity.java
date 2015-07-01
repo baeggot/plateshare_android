@@ -1,12 +1,16 @@
 package com.baeflower.sol.plateshare.activity.share;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,12 +27,20 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baeflower.sol.plateshare.R;
+import com.baeflower.sol.plateshare.fragment.WorkaroundMapFragment;
 import com.baeflower.sol.plateshare.util.JSONParser;
 import com.baeflower.sol.plateshare.util.PSContants;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -61,9 +73,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
 
     private static final String TAG = ShareCreateActivity.class.getSimpleName();
-    private SharedPreferences mPrefUserSetting;
-    private SharedPreferences.Editor mPrefEditor;
-
+    private static final int TURN_ON_GPS = 0;
 
 
     private void showToast(String message) {
@@ -77,7 +87,9 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
+
     //
+    private ScrollView mScrollView;
     private EditText mEtShareTitle;
     private EditText mEtShareExplanation;
     private TextView mTvShareExplaCount;
@@ -85,6 +97,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
     private Button mBtnShareGetPhoto;
     private Button mBtnShareCancelPhoto;
     private Button mBtnDday;
+    private EditText mEtShareTextLocation;
     private Button mBtnShareCreate;
 
 
@@ -108,6 +121,11 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
     private int mId;
     private String mUniv;
 
+    // Map
+    private GoogleMap mGoogleMap;
+    private LatLng mMarkerLatLng;
+    private LocationManager mLocationManager;
+    private String mProvider;
 
 
     private void init() {
@@ -150,6 +168,8 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
         mBtnDday = (Button) findViewById(R.id.btn_dday_date); // 날짜 입력 버튼
         mBtnDday.setOnClickListener(this);
 
+        mEtShareTextLocation = (EditText) findViewById(R.id.et_share_create_text_location);  // 가까운 위치
+
         mBtnShareCreate = (Button) findViewById(R.id.btn_share_create); // 글올리기 버튼
         mBtnShareCreate.setOnClickListener(this);
     }
@@ -162,33 +182,153 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
         init();
 
+        // --------------------- 사용자 데이터
+        mEtShareTextLocation.setText(PSContants.USERINFO.getmTextLocation());
+
+
+        // --------------------- Map Setting
+        mGoogleMap = ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_google_map_share_create)).getMap();
+        mScrollView = (ScrollView) findViewById(R.id.sv_share_create_container);
+
+        ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_google_map_share_create))
+                .setListener(new WorkaroundMapFragment.OnTouchListener() {
+                    @Override
+                    public void onTouch() {
+                        mScrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
+
+        mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+
+                mMarkerLatLng = new LatLng(PSContants.USERINFO.getmLatitude(), PSContants.USERINFO.getmLongitude());
+
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mGoogleMap.getUiSettings().setRotateGesturesEnabled(false);
+                mGoogleMap.getUiSettings().setTiltGesturesEnabled(false);
+
+
+                // -------------------------- 해당 위치로 Map 이동
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMarkerLatLng, 15));
+
+
+                // -------------------------- Map Marker 추가
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(mMarkerLatLng);
+                markerOptions.draggable(true);
+                markerOptions.title("여기근처");
+                mGoogleMap.addMarker(markerOptions);
+
+
+                // -------------------------- Map Marker Drag
+                mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                    @Override
+                    public void onMarkerDragStart(Marker marker) {
+                    }
+                    @Override
+                    public void onMarkerDrag(Marker marker) {
+                    }
+                    @Override
+                    public void onMarkerDragEnd(Marker marker) {
+                        mMarkerLatLng = marker.getPosition();
+                    }
+                });
+
+
+                // -------------------------- Map Click
+                final GoogleMap constantMap = mGoogleMap;
+                constantMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(latLng);
+                        markerOptions.draggable(true);
+                        markerOptions.title("여기근처");
+
+                        constantMap.clear();
+                        constantMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                        constantMap.addMarker(markerOptions);
+                        constantMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                        mMarkerLatLng = latLng; // 위치 저장
+                    }
+                });
+
+                // --------------------------  GPS 켜기(현재 위치로 바로 이동 가능)
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(ShareCreateActivity.this);
+                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                Criteria criteria = new Criteria();
+                mProvider = mLocationManager.getBestProvider(criteria, true);
+
+                if ("passive".equals(mProvider)) { // 위치정보 설정하는 액티비티로 이동
+                    new AlertDialog.Builder(ShareCreateActivity.this).setMessage("위치서비스 동의")
+                            .setNeutralButton("이동", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), TURN_ON_GPS);
+                                }
+                            }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).show();
+                } else {   //위치 정보 설정이 되어 있으면 현재위치를 받아옵니다, gps
+                    mGoogleMap.setMyLocationEnabled(true);
+                }
+            }
+        });
+
     }
 
     private boolean fromGallery;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (data != null) {
-                Uri outputFileUri = data.getData();
 
-                // 카메라로 찍은 사진은 file:///storage/emulated/0/Android/data/com.baeflower.sol.plateshare/files/Pictures/IMG_20150619_160541.jpg // B612
-                // 갤러리에서 오는 사진은 content://media/external/images/media/2292 이런 형식으로 들어옴
+        if (resultCode == RESULT_OK) {
 
-                if (outputFileUri.toString().contains("content")) {
-                    imageSetFromGallery(outputFileUri);
-                } else if (outputFileUri.toString().contains("file")) {
-                    imageSetFromCamera();
-                }
+            switch (requestCode) {
+                case REQUEST_IMAGE_CAPTURE:
+                    if (data != null) {
+                        Uri outputFileUri = data.getData();
 
-            } else {
-                imageSetFromCamera();
+                        // 카메라로 찍은 사진은
+                        // file:///storage/emulated/0/Android/data/com.baeflower.sol.plateshare/files/Pictures/IMG_20150619_160541.jpg // B612
+                        // 갤러리에서 오는 사진은
+                        // content://media/external/images/media/2292 이런 형식으로 들어옴
+
+                        if (outputFileUri.toString().contains("content")) {
+                            imageSetFromGallery(outputFileUri);
+                        } else if (outputFileUri.toString().contains("file")) {
+                            imageSetFromCamera();
+                        }
+
+                    } else {
+                        imageSetFromCamera();
+                    }
+
+                    mIvSharePhoto.setImageBitmap(mTakenPhoto);
+                    mIvSharePhoto.setVisibility(View.VISIBLE);
+                    mImageSet = true;
+
+                    break;
+                case TURN_ON_GPS:
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    Criteria criteria = new Criteria();
+                    mProvider = mLocationManager.getBestProvider(criteria, true);
+
+                    if (mProvider == null){ //사용자가 위치설정동의 안했을때 종료
+                        finish();
+                    } else {//사용자가 위치설정 동의 했을때
+                        // mLocationManager.requestLocationUpdates(mProvider, 1L, 2F, RegisterActivity.this);
+                        mGoogleMap.setMyLocationEnabled(true);
+                    }
+                    break;
             }
-
-            mIvSharePhoto.setImageBitmap(mTakenPhoto);
-            mIvSharePhoto.setVisibility(View.VISIBLE);
-            mImageSet = true;
         }
+
     }
 
     private void imageSetFromGallery(Uri photoUri) {
@@ -274,16 +414,21 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
     }
 
 
-
     // 글 등록
     private void createShareContent() {
-        final String title = mEtShareTitle.getText().toString();
-        final String expla = mEtShareExplanation.getText().toString();
-        final String dday = mBtnDday.getText().toString();
+        String title = mEtShareTitle.getText().toString();
+        String expla = mEtShareExplanation.getText().toString();
+        String dday = mBtnDday.getText().toString();
+        String textLocation = mEtShareTextLocation.getText().toString();
 
-        if (TextUtils.isEmpty(title) == false && TextUtils.isEmpty(expla) == false && mImageSet && mDateSet) {
-            mInsertSharePhp = new InsertSharePhp(ShareCreateActivity.this);
-            mInsertSharePhp.execute(title, expla, dday);
+
+        if (TextUtils.isEmpty(title) == false && TextUtils.isEmpty(expla) == false && TextUtils.isEmpty(textLocation) == false
+                && mImageSet && mDateSet) {
+
+            if (mMarkerLatLng != null) {
+                mInsertSharePhp = new InsertSharePhp(ShareCreateActivity.this);
+                mInsertSharePhp.execute(title, expla, dday, textLocation, String.valueOf(mMarkerLatLng.latitude), String.valueOf(mMarkerLatLng.longitude));
+            }
 
         } else {
             showToast("빠짐없이 입력해 주세요 :D");
@@ -294,9 +439,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
     // DB 및 서버 저장
     private class InsertSharePhp extends AsyncTask<String, Integer, Boolean> {
 
-
         private final String TAG = InsertSharePhp.class.getSimpleName();
-
 
         private WeakReference<Activity> callerActivity;
         private WeakReference<ProgressDialog> dialog;
@@ -309,12 +452,13 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
         private final String mSharePhotoSaveUrl = "http://plateshare.kr/php/share/insert_share_photo.php";
         private final String mShareSaveUrl = "http://plateshare.kr/php/insert_share.php";
 
-        private ProgressDialog mDialog = new ProgressDialog(ShareCreateActivity.this);
-
-
         private String mTitle;
         private String mExplanation;
         private String mSavedImageName;
+        private String mTextLocation;
+        private String mLatitude;
+        private String mLongitude;
+
         private Date mDday;
         private String mDdayStr;
         private JSONParser mJsonParser;
@@ -325,6 +469,7 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
             if( callerActivity.get() != null ) {
                 dialog = new WeakReference<>( new ProgressDialog( callerActivity.get() ) );
+                dialog.get().setMessage("저장하는중.. :D");
                 dialog.get().setCancelable(false);
                 if( callerActivity.get() != null && !callerActivity.get().isFinishing()) {
                     dialog.get().show();
@@ -335,24 +480,26 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
 
         @Override
         protected Boolean doInBackground(String... params) {
-            mTitle = params[0];
-            mExplanation = params[1];
+            mTitle = params[0]; // 제목
+            mExplanation = params[1]; // 설명
 
             try {
                 SimpleDateFormat sf = new SimpleDateFormat("yyyy/mm/dd");
-                mDdayStr = params[2];
+                mDdayStr = params[2]; // 디데이
                 mDday = sf.parse(mDdayStr);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
+            mTextLocation = params[3]; // 가까운 위치
+            mLatitude = params[4]; // 위도
+            mLongitude = params[5]; // 경도
+
             return createShareContent();
         }
 
-
         private boolean createShareContent() {
 
-            /**/
             boolean imageSaved = uploadImageFile();
 
             if (imageSaved) {
@@ -360,7 +507,6 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
             } else {
                 return false;
             }
-
         }
 
 
@@ -372,8 +518,9 @@ public class ShareCreateActivity extends ActionBarActivity implements View.OnCli
             params.add(new BasicNameValuePair("univ", PSContants.USERINFO.getmUniv())); // 학교
             params.add(new BasicNameValuePair("image", mSavedImageName)); // 서버에 저장된 이미지 이름
             params.add(new BasicNameValuePair("d_day", mDdayStr)); // 디데이
-            params.add(new BasicNameValuePair("location", PSContants.USERINFO.getmTextLocation())); // 위치
-            // userId, location, univ
+            params.add(new BasicNameValuePair("location", mTextLocation)); // 가까운 위치
+            params.add(new BasicNameValuePair("latitude", mLatitude)); //
+            params.add(new BasicNameValuePair("longitude", mLongitude)); //
 
             mJsonParser = new JSONParser();
             String resultMessage;

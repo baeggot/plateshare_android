@@ -35,6 +35,9 @@ import java.util.List;
 public class ShareDetailAdapter extends RecyclerView.Adapter<ShareDetailAdapter.ContentViewHolder> implements OnMapReadyCallback {
 
     private static final String TAG = ShareDetailAdapter.class.getSimpleName();
+    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_HEADER = 2;
+
 
     private void showLog(String message) {
         Log.d(TAG, message);
@@ -83,6 +86,18 @@ public class ShareDetailAdapter extends RecyclerView.Adapter<ShareDetailAdapter.
 
         public MapFragment mapFragment;
 
+        public ContentViewHolder(final View parent) {
+            super(parent);
+
+            tvTitle = (TextView) parent.findViewById(R.id.tv_share_detail_title);
+            tvWriter = (TextView) parent.findViewById(R.id.tv_share_detail_writer);
+            tvDday = (TextView) parent.findViewById(R.id.tv_share_detail_dday);
+            ivPhoto = (ImageView) parent.findViewById(R.id.iv_share_detail_photo);
+            tvExplanation = (TextView) parent.findViewById(R.id.tv_share_detail_explanation);
+            tvTextLocation = (TextView) parent.findViewById(R.id.tv_share_detail_text_location);
+        }
+
+        /*
         public ContentViewHolder(View v) {
             super(v);
 
@@ -93,6 +108,11 @@ public class ShareDetailAdapter extends RecyclerView.Adapter<ShareDetailAdapter.
             tvExplanation = (TextView) v.findViewById(R.id.tv_share_detail_explanation);
             tvTextLocation = (TextView) v.findViewById(R.id.tv_share_detail_text_location);
 
+        }
+        */
+
+        public static ContentViewHolder newInstance(View parent) {
+            return new ContentViewHolder(parent);
         }
 
         public TextView getTvTitle() {
@@ -125,46 +145,68 @@ public class ShareDetailAdapter extends RecyclerView.Adapter<ShareDetailAdapter.
     @Override
     public ContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_share_detail, parent, false);
-        ContentViewHolder vh = new ContentViewHolder(view);
+        if (viewType == TYPE_ITEM) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_share_detail, parent, false);
+            return ContentViewHolder.newInstance(view);
+        } else if (viewType == TYPE_HEADER) {
+            final View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_header, parent, false);
+            return new ContentViewHolder(view);
+        }
 
-        return vh;
+//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_share_detail, parent, false);
+//        ContentViewHolder vh = new ContentViewHolder(view);
+//        return vh;
+        throw new RuntimeException("There is no type that matches the type " + viewType + " + make sure your using types    correctly");
     }
 
     // getView()
     @Override
     public void onBindViewHolder(ContentViewHolder holder, int position) {
-        showLog(("onBindViewHolder()"));
 
-        ShareInfo shareInfo = mDataList.get(position);
+        if (isPositionHeader(position) == false) {
+            ShareInfo shareInfo = mDataList.get(position - 1);
 
-        mSf = new SimpleDateFormat("yyyy/MM/dd");
+            mSf = new SimpleDateFormat("yyyy/MM/dd");
 
-        holder.getTvTitle().setText(shareInfo.getmTitle());
-        holder.getTvWriter().setText(PSContants.USERINFO.getmEmail());
-        holder.getTvDday().setText(mSf.format(shareInfo.getmDday()));
+            holder.getTvTitle().setText(shareInfo.getmTitle());
+            holder.getTvWriter().setText(PSContants.USERINFO.getmEmail());
+            holder.getTvDday().setText(mSf.format(shareInfo.getmDday()));
 
-        ImageLoader.getInstance().displayImage(
-                mImageUrl + shareInfo.getmImageName()
-                , holder.getIvPhoto()
-                , mDisplayImageOptions
-                , mAnimateFirstListener);
+            ImageLoader.getInstance().displayImage(
+                    mImageUrl + shareInfo.getmImageName()
+                    , holder.getIvPhoto()
+                    , mDisplayImageOptions
+                    , mAnimateFirstListener);
 
-        holder.getTvExplanation().setText(shareInfo.getmExplanation());
-        holder.getTvTextLocation().setText(shareInfo.getmTextLocation());
+            holder.getTvExplanation().setText(shareInfo.getmExplanation());
+            holder.getTvTextLocation().setText(shareInfo.getmTextLocation());
 
-        // 현재 등록메뉴에서 text_location 이나 latitude, longitude 를 새로 받고 있지 않기 때문에 사용자정보로 저장된 것을 쓴다
+            // 현재 등록메뉴에서 text_location 이나 latitude, longitude 를 새로 받고 있지 않기 때문에 사용자정보로 저장된 것을 쓴다
 
-        holder.mapFragment = (MapFragment) mContext.getFragmentManager().findFragmentById(R.id.fragment_google_map_share_detail);
-        holder.mapFragment.getMapAsync(this);
+            holder.mapFragment = (MapFragment) mContext.getFragmentManager().findFragmentById(R.id.fragment_google_map_share_detail);
+            holder.mapFragment.getMapAsync(this);
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return mDataList.size();
+        return getBasicItemCount() + 1; // Header
     }
 
+    public int getBasicItemCount() {
+        return mDataList == null ? 0 : mDataList.size();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        if (isPositionHeader(position)) {
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -196,7 +238,9 @@ public class ShareDetailAdapter extends RecyclerView.Adapter<ShareDetailAdapter.
     }
 
 
-
+    private boolean isPositionHeader(int position) {
+        return position == 0;
+    }
 
 
 
