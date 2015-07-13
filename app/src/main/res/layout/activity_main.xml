@@ -1,3 +1,87 @@
+<!--<android.support.design.widget.CoordinatorLayout-->
+<!--android:id="@+id/main_content"-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:fitsSystemWindows="true"-->
+<!--tools:context="com.baeflower.sol.plateshare.activity.MainActivity"-->
+<!-->-->
+
+<!--<android.support.design.widget.AppBarLayout-->
+<!--android:id="@+id/appbar"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="?attr/actionBarSize"-->
+<!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+<!--<android.support.v7.widget.Toolbar-->
+<!--android:id="@+id/toolbar_main"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:background="@color/ColorPrimary"-->
+<!--android:minHeight="?attr/actionBarSize"-->
+<!--android:theme="@style/CustomToolbarTheme"-->
+<!--app:layout_scrollFlags="scroll|enterAlways"-->
+<!--/>-->
+
+<!--</android.support.design.widget.AppBarLayout>-->
+
+
+<!--<LinearLayout-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:orientation="vertical"-->
+<!-->-->
+
+<!--<android.support.v4.widget.DrawerLayout-->
+<!--android:id="@+id/drawerLayout_main"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<!--<RelativeLayout-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<!--<com.astuetz.PagerSlidingTabStrip-->
+<!--android:id="@+id/pager_sliding_tabs"-->
+<!--style="@style/PagerSlidingTabStripStyle"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="40dip"-->
+<!--android:layout_gravity="top"-->
+<!--android:textColor="@color/tabs_color"-->
+<!--android:textSize="13sp"-->
+<!--app:pstsIndicatorColor="#FF3F51B5"-->
+<!--app:pstsIndicatorHeight="2dp"-->
+<!--app:pstsShouldExpand="true"-->
+<!--/>-->
+
+<!--&lt;!&ndash; app:pstsTextColorSelected="@color/blue" &ndash;&gt;-->
+
+<!--<android.support.v4.view.ViewPager-->
+<!--android:id="@+id/pager"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:layout_below="@+id/pager_sliding_tabs"-->
+<!--tools:context=".MainActivity"/>-->
+
+<!--</RelativeLayout>-->
+
+<!--<android.support.design.widget.NavigationView-->
+<!--android:id="@+id/navigation_view"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="match_parent"-->
+<!--android:layout_gravity="start"-->
+<!--app:headerLayout="@layout/drawer_view_header"-->
+<!--app:menu="@menu/navigation_view_items"-->
+<!--/>-->
+
+<!--</android.support.v4.widget.DrawerLayout>-->
+
+<!--</LinearLayout>-->
+
+<!--</android.support.design.widget.CoordinatorLayout>-->
+
 <android.support.v4.widget.DrawerLayout
     android:id="@+id/drawerLayout_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -8,46 +92,28 @@
     android:fitsSystemWindows="true"
     tools:context="com.baeflower.sol.plateshare.activity.MainActivity">
 
+    <!-- fitsSystemWindows="true" : to achieve the slide under transparent status bar effect -->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-        <com.astuetz.PagerSlidingTabStrip
-            android:id="@+id/tabs"
-            style="@style/PagerSlidingTabStripStyle"
-            android:layout_width="match_parent"
-            android:layout_height="40dip"
-            android:layout_gravity="top"
-            android:textColor="@color/tabs_color"
-            android:textSize="13sp"
-            app:pstsIndicatorColor="#FF3F51B5"
-            app:pstsShouldExpand="true"
-            app:pstsIndicatorHeight="2dp"
-            />
-
-        <!-- app:pstsTextColorSelected="@color/blue" -->
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tabs"
-            tools:context=".MainActivity"/>
-
-    </RelativeLayout>
+    <!-- ***** 반드시 컨텐츠 영역이 위에 오고 Navigation View 가 그 밑에 와야 된다 ***** -->
+    <!-- ***** DrawerLayout -> Content 영역 -> Navigation View 가 아래 -> 위 순서로 쌓임 ***** -->
+    <!-- ***** DrawerLayout 안에 Toolbar 가 들어있어서 NavigationView 보일 때 Toolbar 가 가려지는 듯 ***** -->
 
 
+    <!-- 주 컨텐츠를 표시할 뷰 -->
+    <include layout="@layout/include_list_viewpager"/>
+
+    <!-- 드로어가 표시될 뷰 -->
+    <!-- android:layout_gravity="start" : 드로어가 표시될 방향 -->
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/navigation_view_items"
-        app:headerLayout="@layout/drawer_view_header"
-        />
+        android:fitsSystemWindows="true"/>
 
+    <!--  -->
 
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,11 +1,15 @@
 package com.baeflower.sol.plateshare;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +40,11 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    // 인터넷 연결 확인
+    private boolean mIsOnline = false;
+
+
+    //
     private EditText mEtId;
     private EditText mEtPassword;
     private CheckBox mCbAutoLogin;
@@ -43,8 +52,10 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
     private Button mBtnMemberRegister;
     private Button mBtnMemberLogin;
 
+    //
     private SelectMemberPhp mSelectMemberPhp;
 
+    //
     private SharedPreferences mPrefUserSetting;
     private SharedPreferences.Editor mPrefEditor;
 
@@ -79,6 +90,7 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
         mPrefUserSetting = getSharedPreferences(PSContants.SETTING_FILENAME, 0);
         mPrefEditor = mPrefUserSetting.edit(); // Preference Editor
 
+        mIsOnline = isOnline();
 
     }
 
@@ -97,8 +109,31 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
             mCbAutoLogin.setChecked(true);
         }
 
-
     }
+
+
+    // network 연결 상태 확인
+    private boolean isOnline() {
+        try {
+            ConnectivityManager conMan = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo.State wifi = conMan.getNetworkInfo(1).getState(); // wifi
+            if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
+                return true;
+            }
+
+            NetworkInfo.State mobile = conMan.getNetworkInfo(0).getState(); // mobile ConnectivityManager.TYPE_MOBILE
+            if (mobile == NetworkInfo.State.CONNECTED || mobile == NetworkInfo.State.CONNECTING) {
+                return true;
+            }
+
+        } catch (NullPointerException e) {
+            return false;
+        }
+
+        return false;
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -108,24 +143,35 @@ public class IntroActivity extends ActionBarActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_intro_register: // 회원가입
-                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.btn_intro_login: // 로그인
-                String email = mEtId.getText().toString();
-                String password = mEtPassword.getText().toString();
 
-                if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                    showToast("아이디 또는 비밀번호를 입력하세요");
-                } else {
-                    // DB 접근 - 아이디 비밀번호 일치하는지 확인
-                    mSelectMemberPhp = new SelectMemberPhp();
-                    mSelectMemberPhp.execute(email, password);
-                }
-                break;
+        // 인터넷 연결이 안돼있으면
+        if (mIsOnline == true) {
+            switch (v.getId()) {
+                case R.id.btn_intro_register: // 회원가입
+                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.btn_intro_login: // 로그인
+                    String email = mEtId.getText().toString();
+                    String password = mEtPassword.getText().toString();
+
+                    if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
+                        showToast("아이디 또는 비밀번호를 입력하세요");
+                    } else {
+                        // DB 접근 - 아이디 비밀번호 일치하는지 확인
+                        mSelectMemberPhp = new SelectMemberPhp();
+                        mSelectMemberPhp.execute(email, password);
+                    }
+                    break;
+            }
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(IntroActivity.this);
+            builder.setMessage("네트워크 연결에 문제가 있습니다");
+            builder.setNegativeButton("닫기", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
+
     }
 
     @Override

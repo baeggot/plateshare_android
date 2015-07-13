@@ -21,5 +21,8 @@
     <string name="title_activity_share_create">ShareCreateActivity</string>
     <string name="title_activity_recycler_test">RecyclerTestActivity</string>
     <string name="title_activity_share_detail">나누기</string>
+    <string name="snackbar_action_undo">undo</string>
+    <string name="closeDrawer">close drawer</string>
+    <string name="openDrawer">open drawer</string>
 
 </resources>

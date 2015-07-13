@@ -5,7 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
 import com.baeflower.sol.plateshare.R;
-import com.baeflower.sol.plateshare.content.MainActivity;
+import com.baeflower.sol.plateshare.activity.MainActivity;
 
 /**
  * Created by sol on 2015-06-09.

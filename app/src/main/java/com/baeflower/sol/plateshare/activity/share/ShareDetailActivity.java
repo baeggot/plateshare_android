@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -153,8 +154,9 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
         setTitle(getString(R.string.app_name));
 //        mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setShowHideAnimationEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 화살표
+
+//        getSupportActionBar().setShowHideAnimationEnabled(true); // 머하는애야?
     }
 
 
@@ -193,17 +195,42 @@ public class ShareDetailActivity extends ActionBarActivity implements OnMapReady
         */
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-    private void hideViews() {
-//        mToolbar.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-//        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabButton.getLayoutParams();
-//        int fabBottomMargin = lp.bottomMargin;
-//        mFabButton.animate().translationY(mFabButton.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        switch (item.getItemId()) {
+            case android.R.id.home: // Toolbar Title 옆에 화살표
+                onBackPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // 옆으로 밀면서 사라지는 애니메이션
+        // this.overridePendingTransition(R.anim.finish_right_animation, R.anim.finish_left_animation);
+    }
+
+
+    private void hideViews() {
+        /*
+        mToolbar.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabButton.getLayoutParams();
+        int fabBottomMargin = lp.bottomMargin;
+        mFabButton.animate().translationY(mFabButton.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        */
+    }
+
+
     private void showViews() {
-//        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-//        mFabButton.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        /*
+        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        mFabButton.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        */
     }
 
 

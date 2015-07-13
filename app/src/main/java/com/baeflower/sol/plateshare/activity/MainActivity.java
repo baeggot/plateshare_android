@@ -1,31 +1,40 @@
 package com.baeflower.sol.plateshare.activity;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.baeflower.sol.plateshare.R;
+import com.baeflower.sol.plateshare.activity.share.ShareCreateActivity;
 import com.baeflower.sol.plateshare.fragment.BuyFragment;
 import com.baeflower.sol.plateshare.fragment.ShareFragment;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
-
+/**
+ * Created by sol on 2015-07-07.
+ */
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -37,40 +46,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, message);
     }
 
-
-    // 전체 레이아웃 (ViewPager)
-    //private ActionBar mActionBar;
-    private PagerSlidingTabStrip mTabs;
-
-    private ViewPager mViewPager;
-    private MyPagerAdapter mPagerAdapter;
-
-
-    // Navigation View
+    //
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mToggle; // v7
-    private NavigationView mNavigation;
+    private CoordinatorLayout mCooldinatorLayout;
 
 
-    // php 로 데이터 가져오기
-    private String mUniv; // 컨텐츠 가져올 대학교
+    //
+    private boolean mNavigationViewOpen = false;
 
-
-    // Shared Preference 에 저장할 xml 파일명
-    private final String mSettingFileName = "plateshare_setting";
-    private SharedPreferences mPrefUserSetting;
-    private SharedPreferences.Editor mPrefEditor;
-
-
-    // 콘텐츠 출력
-
-    private void init() {
-        mPrefUserSetting = getSharedPreferences(mSettingFileName, 0);
-        mPrefEditor = mPrefUserSetting.edit(); // Preference Editor
-        mUniv = mPrefUserSetting.getString("univ", "");
-
-
-    }
 
 
     @Override
@@ -78,147 +61,218 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
 
-        // mActionBar = this.getSupportActionBar();
+        // ------------------------- Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar); // Toolbar 를 Actionbar 로 세팅
 
-        // -------------------- ViewPager 세팅
-        mTabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                showLog(String.valueOf(position));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-        mViewPager.setAdapter(mPagerAdapter);
-
-        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-        mViewPager.setPageMargin(pageMargin);
-
-        mTabs.setViewPager(mViewPager);
-
-        // -------------------- Navigation View 세팅
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout_main);
-
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name);
-        mDrawerLayout.setDrawerListener(mToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setShowHideAnimationEnabled(true);
 
-        mNavigation = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigation.setNavigationItemSelectedListener(this);
+        // 어떤 Toolbar 는 세짝대기로 나오고, 어떤 Toolbar 는 화살표로 나오고.. 무슨 차이지?
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
-    }
 
-    // 액션바 오버플로우 메뉴 레이아웃
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        mCooldinatorLayout = (CoordinatorLayout) findViewById(R.id.coorLayout_main_content);
 
-    // 액션바 오버플로우 메뉴 실행
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_contact:
-                return true;
+
+        // ------------------------- Navigation View (옆에 나오는거)
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout_main);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer){
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                mNavigationViewOpen = false;
+
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                showLog("onDrawerSlide");
+
+                if (mNavigationViewOpen == true) {
+                    /*
+                    final int newLeftMargin = 5;
+                    Animation a = new Animation() {
+
+                        @Override
+                        protected void applyTransformation(float interpolatedTime, Transformation t) {
+                            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mCooldinatorLayout.getLayoutParams();
+                            params.leftMargin = (int)(newLeftMargin * interpolatedTime);
+                            mCooldinatorLayout.setLayoutParams(params);
+                        }
+                    };
+                    a.setDuration(500); // in ms
+                    mCooldinatorLayout.startAnimation(a);
+
+                    */
+                } else {
+
+
+                }
+
+                super.onDrawerSlide(drawerView, slideOffset);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                mNavigationViewOpen = true;
+
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        // actionbarToggle 을 drawer layout 에 세팅
+        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
+        // calling sync state is necessary or else your hamburger icon wont show up ... ???
+        actionBarDrawerToggle.syncState();
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+            navigationView.setNavigationItemSelectedListener(this);
         }
-        return super.onOptionsItemSelected(item) || mToggle.onOptionsItemSelected(item);
-    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
 
+        // ------------------------- View Pager
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        if (viewPager != null) {
+            setupViewPager(viewPager);
         }
+
+
+        // ------------------------- FAB
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_main);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                    // setAction 에 click listener 안달면 UNDO 안나오네?!
+                    Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+                            .setAction(R.string.snackbar_action_undo, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                }
+                            }).show();
+                */
+
+                // Share 글 등록 Activity 호출
+                Intent intent = new Intent(MainActivity.this, ShareCreateActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+
+        // ------------------------- TAB
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs_main);
+        // viewPager setup 하기 전에 바꿔야된다!!! 이거때문에 삽질
+        tabLayout.setTabTextColors(Color.parseColor("#8A8A8A"), Color.parseColor("#3F51B5"));
+        tabLayout.setupWithViewPager(viewPager);
+
+
+
     }
 
+
+    // Navigation View Item Selected
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        showToast("onNavigationItemSelected()");
+
+        if (menuItem.isChecked())
+            menuItem.setChecked(false);
+        else
+            menuItem.setCheckable(true);
+
+        switch (menuItem.getItemId()) {
+            case R.id.navigation_item_share:
+                // Fragment 교체
+                /*
+                Toast.makeText(getApplicationContext(),"Share Selected",Toast.LENGTH_SHORT).show();
+                ContentFragment fragment = new ContentFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame,fragment);
+                fragmentTransaction.commit();
+                return true;
+                */
+
+                return true;
+            case R.id.navigation_item_buy:
+                return true;
+            case R.id.navigation_item_my_info_edit:
+                return true;
+        }
+
+
         return false;
     }
 
 
-    private int mFinishCnt = 0;
 
     @Override
-    public void onBackPressed() {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // getMenuInflater().inflate(R.menu.sample_actions, menu);
+        return true;
+    }
 
-        // 기다리는 화면에서는 back 키가 동작 안하도록
-        // getSupportFragmentManager().getFragments(); // stack 에 들어간 fragment 가 다 나오나?
-
-        // 0 이 아닐 때, ...
-        /*
-            int backStackCnt = getSupportFragmentManager().getBackStackEntryCount();
-            if (backStackCnt != 0) {
-                getSupportFragmentManager().popBackStack();
-            } else {
-                super.onBackPressed();
-            }
-        */
-
-
-        if (mFinishCnt == 0) {
-            showToast("한번 더 누를 경우 종료합니다 ^o^");
-            mFinishCnt++;
-        } else {
-            super.onBackPressed();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
 
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getSupportFragmentManager());
+        adapter.addFragment(new ShareFragment(), "나누기");
+        adapter.addFragment(new BuyFragment(), "같이사기");
+        viewPager.setAdapter(adapter);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        menuItem.setChecked(true);
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
     }
 
 
-    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+    static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+        private final List<String> mFragmentTitles = new ArrayList<>();
 
-        private final String[] mMenus = {"나누기", "같이사기"};
-        private final int SHARE = 0;
-        private final int BUY = 1;
-
-        public MyPagerAdapter(FragmentManager fm) {
+        public Adapter(FragmentManager fm) {
             super(fm);
         }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mMenus[position];
-        }
-
-        @Override
-        public int getCount() {
-            return mMenus.length;
+        public void addFragment(Fragment fragment, String title) {
+            mFragments.add(fragment);
+            mFragmentTitles.add(title);
         }
 
         @Override
         public Fragment getItem(int position) {
-            showLog("getItem_" + String.valueOf(position));
-
-            switch (position) {
-                case SHARE:
-                    return ShareFragment.newInstance();
-                case BUY:
-                    return BuyFragment.newInstance();
-                default:
-                    return null;
-            }
+            return mFragments.get(position);
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            showLog("instantiateItem");
-            return super.instantiateItem(container, position);
+        public int getCount() {
+            return mFragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitles.get(position);
         }
     }
 

@@ -30,6 +30,7 @@
         <!--<item name="windowActionBarOverlay">true</item>-->
     </style>
 
+
     <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <!-- Customize your theme here. -->
         <!-- Toolbar의 타이틀 색 -->
@@ -87,6 +88,32 @@
     </style>
 
 
+    <!-- Custom Material Design -->
+    <style name="CustomMaterialAndNoActionTheme" parent="NoActionBar">
+        <!--<item name="colorAccent">#FF4081</item>-->
+        <item name="colorAccent">#3F51B5</item>
+        <!--<item name="colorPrimary">#3F51B5</item>-->
+        <!--<item name="colorPrimaryDark">#303F9F</item>-->
+        <item name="android:colorPrimary">@color/ColorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/ColorPrimaryDark</item>
+
+        <!-- Navigation View 선택된 아이템 색깔 -->
+        <item name="colorControlHighlight">#00CC55</item>
+
+        <!-- 글씨색? -->
+        <item name="colorControlNormal">@color/abc_primary_text_material_dark</item>
+
+        <!-- 요건 뭐지 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <!-- accent 컬러가 기본컬러 -->
+        <item name="tabIndicatorColor">#4c5ce7</item>
+    </style>
+
+
 
     <!-- Custom Material Design -->
     <style name="CustomMaterialTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -95,6 +122,34 @@
         <item name="colorPrimaryDark">#303F9F</item>
         <item name="colorControlHighlight">#00CC55</item>
         <item name="colorControlNormal">#FF0000</item>
+    </style>
+
+
+    <style name="CustomToolbarTheme">
+        <!-- android:textColorPrimary is the  color of the title text in the Toolbar, in the Theme.AppCompat theme:  -->
+        <!-- abc_primary_text_material_light : 검정색 -->
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
+
+        <!-- android:textColorPrimaryInverse is the  color of the title text in the Toolbar, in the Theme.AppCompat.Light theme:  -->
+        <!-- <item name="android:textColorPrimaryInverse">@color/abc_primary_text_material_light</item> -->
+
+        <!-- android:actionMenuTextColor is the color of the text of
+              action (menu) items in the Toolbar, at least in the
+              Theme.AppCompat theme.
+              For some reason, they already get the textColorPrimary
+              when running on API 21, but not on older versions of
+              Android, so this is only necessary to support older
+              Android versions.-->
+        <item name="actionMenuTextColor">@color/abc_primary_text_material_dark</item>
+        <!-- android:textColorSecondary is the color of the menu
+             overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
+
+        <!-- This would set the toolbar's background color,
+              but setting this also changes the popup menu's background,
+              even if we define popupTheme for our <Toolbar> -->
+        <!-- <item name="android:background">@color/color_primary</item> -->
+
     </style>
 
 

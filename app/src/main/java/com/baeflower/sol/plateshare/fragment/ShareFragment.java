@@ -1,7 +1,6 @@
 package com.baeflower.sol.plateshare.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.baeflower.sol.plateshare.R;
 import com.baeflower.sol.plateshare.adapter.ShareContentsAdapter;
-import com.baeflower.sol.plateshare.activity.share.ShareCreateActivity;
 import com.baeflower.sol.plateshare.model.ShareInfo;
 import com.baeflower.sol.plateshare.util.JSONParser;
 import com.baeflower.sol.plateshare.util.PSContants;
@@ -98,6 +96,7 @@ public class ShareFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     // fragment 생성
     // 계속 생성하는게 나을까, 싱글턴으로 생성하는게 나을까?
+    // static 빼버림. 왜 static 이어야하지?
     public static ShareFragment newInstance() {
         ShareFragment fragment = new ShareFragment();
         Bundle args = new Bundle();
@@ -129,8 +128,6 @@ public class ShareFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_share);
         mRecyclerView.setHasFixedSize(false); // 레이아웃 사이즈가 변하지 않을거면 true
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
         //
 
 
@@ -145,22 +142,6 @@ public class ShareFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 android.R.color.holo_orange_light);
 
 
-
-        // -------------------- Floating Button
-        mActionButton = (ActionButton) rootView.findViewById(R.id.action_button_plus_share);
-        mActionButton.setButtonColor(getResources().getColor(R.color.blue));
-        mActionButton.setButtonColorPressed(getResources().getColor(R.color.blue_pressed));
-        mActionButton.setImageResource(R.drawable.fab_plus_icon);
-        mActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // showLog("floating button click");
-                Intent intent = new Intent(getActivity(), ShareCreateActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
         // -------------------- Layout
         if (savedInstanceState == null) { // 처음 로딩
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -173,11 +154,9 @@ public class ShareFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-
         // 데이터
         mSelectShareByUnivPhp = new SelectShareByUnivPhp();
         mSelectShareByUnivPhp.execute(FIRST_DATA_LOADING, PSContants.SHARE_LOAD_COUNT); // 10개 가져오기
-
 
         return rootView;
     }

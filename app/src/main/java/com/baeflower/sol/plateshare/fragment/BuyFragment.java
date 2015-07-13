@@ -88,18 +88,6 @@ public class BuyFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_buy, container, false);
 
-        // -------------------- Floating Button
-        mActionButton = (ActionButton) rootView.findViewById(R.id.action_button_plus_buy);
-        mActionButton.setButtonColor(getResources().getColor(R.color.blue));
-        mActionButton.setButtonColorPressed(getResources().getColor(R.color.blue_pressed));
-        mActionButton.setImageResource(R.drawable.fab_plus_icon);
-        mActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLog("floating button click");
-            }
-        });
-
 
         // -------------------- Recycler View
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_buy);
@@ -116,9 +104,6 @@ public class BuyFragment extends Fragment {
             setRecyclerViewLayoutManager(LayoutManagerType.STAGGERED_LAYOUT_MANAGER);
         }
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // mRVAdapter = new ShareContentsAdapter(new String[]{ "헤이요", "김밥에김이없데", "요요요", "촛불하나", "목이", "간지러" }, BUY);
-        // mRecyclerView.setAdapter(mRVAdapter);
 
         return rootView;
     }
